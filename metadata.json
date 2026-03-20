@@ -1,0 +1,5 @@
+{
+  "name": "KarmYog PlantSnap",
+  "description": "AI-Powered Plant Identifier & Care Assistant with a physics-based interactive UI.",
+  "requestFramePermissions": ["camera"]
+}
