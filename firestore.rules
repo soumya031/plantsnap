@@ -25,14 +25,12 @@ service cloud.firestore {
 
     // User profiles
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow create, update: if isOwner(userId) || isAdmin();
+      allow get, list, create, update, delete: if isOwner(userId) || isAdmin();
     }
 
     // User's plants subcollection
     match /users/{userId}/plants/{plantId} {
-      allow read, list: if isOwner(userId) || isAdmin();
-      allow create, update, delete: if isOwner(userId) || isAdmin();
+      allow get, list, create, update, delete: if isOwner(userId) || isAdmin();
     }
 
     // Default deny

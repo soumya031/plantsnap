@@ -41,7 +41,7 @@ const CareChat: React.FC<CareChatProps> = ({ plant, onClose }) => {
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
       const chat = ai.chats.create({
-        model: "gemini-3.1-pro-preview",
+        model: "gemini-2.5-flash",
         config: {
           systemInstruction: `You are a helpful botanist and plant care assistant. 
           The user is asking about their plant: ${plant.commonName} (${plant.scientificName}).

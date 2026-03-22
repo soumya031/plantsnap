@@ -10,6 +10,7 @@ import PlantCard from './components/PlantCard';
 import { Leaf, User, LogOut, LayoutGrid, Camera, Loader2 } from 'lucide-react';
 import { auth, googleProvider, signInWithPopup, signOut, db, collection, onSnapshot, query, orderBy, doc, setDoc, serverTimestamp, handleFirestoreError, OperationType } from './firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { Toaster } from 'react-hot-toast';
 
 export default function App() {
   const [started, setStarted] = useState(false);
@@ -92,6 +93,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-emerald-50/50 pb-24 md:pb-0 md:pt-20">
+      <Toaster position="top-right" />
       {/* Desktop Header */}
       <header className="hidden md:flex fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-b border-emerald-100 items-center justify-between px-8 z-50">
         <div className="flex items-center gap-2 text-emerald-700 font-bold text-2xl">

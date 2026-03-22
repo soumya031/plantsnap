@@ -3,6 +3,8 @@ import { Droplets, Sun, Info, MessageCircle, Calendar, ChevronRight, Trash2, Che
 import CareChat from './CareChat';
 import { auth, db, doc, setDoc, serverTimestamp, handleFirestoreError, OperationType } from '../firebase';
 import { deleteDoc } from 'firebase/firestore';
+import { motion, AnimatePresence } from 'motion/react';
+import toast from 'react-hot-toast';
 
 interface PlantCardProps {
   plant: any;
@@ -35,6 +37,14 @@ const PlantCard: React.FC<PlantCardProps> = ({ plant }) => {
         lastWatered: serverTimestamp(),
         wateringLog: newLog
       }, { merge: true });
+      toast.success(`${plant.nickname} is all hydrated!`, {
+        icon: '💧',
+        style: {
+          borderRadius: '1rem',
+          background: '#065f46',
+          color: '#fff',
+        },
+      });
     } catch (err) {
       handleFirestoreError(err, OperationType.UPDATE, `users/${auth.currentUser.uid}/plants/${plant.id}`);
     } finally {
@@ -49,6 +59,9 @@ const PlantCard: React.FC<PlantCardProps> = ({ plant }) => {
     try {
       const plantRef = doc(db, `users/${auth.currentUser.uid}/plants`, plant.id);
       await deleteDoc(plantRef);
+      toast.success(`${plant.nickname} removed from garden`, {
+        icon: '🗑️',
+      });
     } catch (err) {
       handleFirestoreError(err, OperationType.DELETE, `users/${auth.currentUser.uid}/plants/${plant.id}`);
     } finally {
@@ -58,7 +71,12 @@ const PlantCard: React.FC<PlantCardProps> = ({ plant }) => {
 
   return (
     <>
-      <div 
+      <motion.div 
+        layout
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        whileHover={{ y: -5 }}
         onClick={() => setShowDetails(true)}
         className="group bg-white rounded-3xl shadow-md hover:shadow-xl transition-all border border-emerald-100 overflow-hidden cursor-pointer active:scale-[0.98]"
       >
@@ -118,12 +136,23 @@ const PlantCard: React.FC<PlantCardProps> = ({ plant }) => {
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Details Modal */}
-      {showDetails && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
+      <AnimatePresence>
+        {showDetails && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+            >
             <div className="relative h-64 shrink-0">
               <img src={plant.photoURL} alt={plant.nickname} className="w-full h-full object-cover" />
               <button 
@@ -206,9 +235,10 @@ const PlantCard: React.FC<PlantCardProps> = ({ plant }) => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Chat Modal */}
       {showChat && (

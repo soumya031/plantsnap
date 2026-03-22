@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Camera, Loader2, Leaf, AlertCircle, RefreshCw, Save, CheckCircle2 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import { auth, db, storage, ref, uploadString, getDownloadURL, doc, setDoc, collection, addDoc, serverTimestamp, handleFirestoreError, OperationType } from '../firebase';
+import toast from 'react-hot-toast';
 
 interface PlantInfo {
   commonName: string;
@@ -69,7 +70,7 @@ const PlantIdentifier: React.FC = () => {
 If you cannot identify the plant, return { "error": "Could not identify", "suggestions": ["possible match 1", "possible match 2"] }`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.1-pro-preview",
+        model: "gemini-2.5-flash",
         contents: [
           {
             parts: [
@@ -137,6 +138,10 @@ If you cannot identify the plant, return { "error": "Could not identify", "sugge
 
       await setDoc(doc(db, `users/${userId}/plants`, plantId), plantData);
       setSaved(true);
+      toast.success(`${nickname || result.commonName} added to your garden!`, {
+        icon: '🌿',
+        duration: 4000,
+      });
     } catch (err) {
       handleFirestoreError(err, OperationType.WRITE, `users/${auth.currentUser.uid}/plants`);
       setError('Failed to save plant to your garden. Please check your connection.');
